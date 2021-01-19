@@ -12,7 +12,7 @@ using namespace std::chrono;
 
 
 
-enum DRINK_TYPE { BOTTLE, CAN, BOTTLE_BEER_1_5};
+enum DRINK_TYPE { BOTTLE, CAN, BOTTLE_BEER_1_5, UNKNOWN};
 
 enum BOX_STATE { IDLE, SEE_BOTTLE, COUNT_BOTTLE_OR_CAN, PUSH_DRINK };
 
@@ -48,6 +48,12 @@ void drawDetecetdRects(Mat frame, vector<cv::Rect> rects){
     }
 }
 
+double sumMoney = 0.0;
+void countMoney(DRINK_TYPE type){
+
+    sumMoney += 0.33;
+}
+
 
 int main(int argc, char** argv) {   
     
@@ -76,6 +82,10 @@ int main(int argc, char** argv) {
     
     Mat frame;
 
+    DRINK_TYPE type = UNKNOWN;
+    int countBottleWinner = 0;
+    int countCanWinner = 0;
+
     while(true) {   
        
         capture >> frame;
@@ -83,17 +93,18 @@ int main(int argc, char** argv) {
         {
             case IDLE:
             {   
-               
-                vector<cv::Rect> b_rects = detectBottle( frame, area, bottles_cascade);  
+                
+                vector<cv::Rect> b_rects = detectBottle( frame, area, bottles_cascade); 
+                // vector<cv::Rect> b_cans = detectCan( frame, area, can_cascade);   
                 cv::rectangle( frame, area, Scalar(0,0,0),2 );
-          
-                if( b_rects.size() == 0 ){
+
+                if( b_rects.size() == 0 /*|| b_cans.size() == 0*/ ){
                     putText(frame,"IDLE", cv::Point(100,100),
                         1,3,Scalar(0,0,255),3);
                     state = IDLE;
                 } else {
                     state = SEE_BOTTLE;
-                    putText(frame,"SEE_BOTTLE", cv::Point(100,100),
+                    putText(frame,"SEE_BOTTLE, SUM IS :" + to_string(sumMoney), cv::Point(100,100),
                         1,3,Scalar(0,0,255),3);
                     start = high_resolution_clock::now();
                     break;
@@ -101,21 +112,44 @@ int main(int argc, char** argv) {
             }
             case SEE_BOTTLE:
             {   
+              
                 vector<cv::Rect> b_rects = detectBottle( frame, area, bottles_cascade);  
+                // vector<cv::Rect> b_cans = detectCan( frame, area, can_cascade);   
+
                 cv::rectangle( frame, area, Scalar(0,0,0),2 );
-                if( b_rects.size() > 0 ){
+                if( b_rects.size() > 0 /*|| b_cans.size() > 0*/ ){
                     
+                    if (b_rects.size() > 0 )
+                    {
+                        countBottleWinner++;
+                    }
+                    // if (b_cans.size() > 0 )
+                    // {
+                    //     countCanWinner++;
+                    // }
+
                     drawDetecetdRects(frame,b_rects);
                     auto end = high_resolution_clock::now(); 
                     auto duration = duration_cast<seconds>(end - start); 
                     // if we pass more then X seconds, movnig to detect bottle
                     if ( duration.count() > secondThreshold){
                         putText(frame,"ALERT", cv::Point(100,100),1,3,Scalar(0,0,255),3);
+                        
+                        if( countBottleWinner >  countCanWinner ){
+                            type = BOTTLE;
+                        } else {
+                            type = CAN;
+                        }
+                        
+                        countBottleWinner = 0;
+                        countCanWinner = 0;
+                        
                         state = COUNT_BOTTLE_OR_CAN;                       
-                        imshow("COUNT_BOTTLE_OR_CAN",frame);
-                        waitKey(0);
-                        return -1;
-                         break;
+                        // imshow("COUNT_BOTTLE_OR_CAN",frame);
+                        // waitKey(0);
+                        
+                        // return -1;
+                        break;
                     } // we wait for the time will pass 
                     else
                     {
@@ -124,24 +158,30 @@ int main(int argc, char** argv) {
                         state = SEE_BOTTLE;
                         break;
                     }                   
-                } // we saw nothing
+                }
+                // we saw nothing
                 else 
                 {   
-                    putText(frame,"IDLE", cv::Point(100,100),
+                    countBottleWinner = 0;
+                    countCanWinner = 0;
+
+                    putText(frame,"IDLE, SUM IS :" + to_string(sumMoney), cv::Point(100,100),
                         1,3,Scalar(0,0,255),3);
                     state = IDLE;
                     break;
                 }               
             }
 
-            // case COUNT_BOTTLE_OR_CAN:
-            // {
-            //     currentType = detectType(frame);
-            //     countMoney(currentType);
-            //     state = PUSH_DRINK;
-            //     start = high_resolution_clock::now();
-            //     break;
-            // }
+            case COUNT_BOTTLE_OR_CAN:
+            {
+                countMoney(type);
+                state = IDLE;//PUSH_DRINK;
+                start = high_resolution_clock::now();
+                type = UNKNOWN;
+                // putText(frame,"SUM IS :" + to_string(sumMoney), cv::Point(100,100),
+                //             1,3,Scalar(0,0,255),3);
+                break;
+            }
             // case PUSH_DRINK:
             // {   
             //     if (!stillPushing){
