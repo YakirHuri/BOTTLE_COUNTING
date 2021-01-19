@@ -10,4 +10,6 @@ add_executable(${PROJECT_NAME}_program
   src/main.cpp  
 )
 
-target_link_libraries(${PROJECT_NAME}_program  ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_NAME}_program 
+ ${OpenCV_LIBS}
+)
