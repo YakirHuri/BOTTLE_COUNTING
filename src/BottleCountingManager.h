@@ -5,6 +5,7 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
 #include <iostream>
+// sudo apt-get install libboost1.62-*
 #include <boost/algorithm/string/classification.hpp> // Include boost::for is_any_of
 #include <boost/algorithm/string/split.hpp>          // Include for boost::split
 #include <fstream>
@@ -138,10 +139,12 @@ public:
     }
 
     void sendSms() {
-
         string command = 
-            "python ../src/sendSms.py " + phoneNumber_ + " " + to_string(sumMoney_) ;
+            "python3 ../src/sendSms.py " + phoneNumber_ + " " + to_string(sumMoney_) ;
+        
         bool res = system(command.c_str());
+        cout<<" the command is "<<command<<" and the rest is "<<res<<endl;
+
     }
 
 public:

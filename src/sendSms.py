@@ -16,6 +16,7 @@ def sendSms(phoneNumber, sum):
         Message="total sum of money is "+ sum
 
     )
+    print('phoneNumber ' + phoneNumber)
 
 
 if __name__ == '__main__':
@@ -25,5 +26,6 @@ if __name__ == '__main__':
     sum = sys.argv[2]
 
     sendSms(phoneNumber, sum)
+    
 
    
