@@ -11,11 +11,14 @@ servo1 = GPIO.PWM(11,50) # Note 11 is pin, 50 = 50Hz pulse
 
 #start PWM running, but with value of 0 (pulse off)
 servo1.start(0)
-while 1:
-    for dc in range(0, 101, 5):
-        servo1.ChangeDutyCycle(dc)
-        time.sleep(0.1)
-   
+count = 12
+#for dc in range(12):
+#    servo1.ChangeDutyCycle(count)
+#    time.sleep(0.1)
+#    count = count - 1 
+servo1.ChangeDutyCycle(12)
+time.sleep(2)
+  
 servo1.stop()
 
 GPIO.cleanup()

@@ -23,6 +23,14 @@ int main(int argc, char **argv)
     DRINK_TYPE type = UNKNOWN;
     int countBottleWinner = 0;
     int countCanWinner = 0;
+    
+    int frame_width = 640; 
+
+    int frame_height = 480; 
+
+     VideoWriter video("/home/pi/bottle_ws/BOTTLE_COUNTING/src/outcpp.avi",0,5, cv::Size(frame_width,frame_height),true);
+ 
+
 
     while (true)
     {
@@ -105,41 +113,55 @@ int main(int argc, char **argv)
         case COUNT_BOTTLE_OR_CAN:
         {
             bottleCountingManager.countMoney(type);
-            state = IDLE; //PUSH_DRINK;
             start = high_resolution_clock::now();
             type = UNKNOWN;
-            bottleCountingManager.sendSms();
             // putText(frame,"SUM IS :" + to_string(sumMoney), cv::Point(100,100),
             //             1,3,Scalar(0,0,255),3);
+            
+            state = PUSH_DRINK; //PUSH_DRINK;
             break;
         }
-            // case PUSH_DRINK:
-            // {
-            //     if (!stillPushing){
-            //         pushDrinkdDirection(currentType); //thread
-            //         stillPushing = true;
-            //     }
-            //     auto end = high_resolution_clock::now();
-            //     auto duration = duration_cast<seconds>(end - start);
-            //     if ( duration.count() > secondPushing){
+         case PUSH_DRINK:
+         {   
+             bottleCountingManager.sendSms();
 
-            //         stillPushing = false;
-            //         state = IDLE;
+             DRINK_TYPE  currentType = BOTTLE;   
+             bottleCountingManager.pushDrinkdDirection(currentType);
+             /*if (!stillPushing){
+                 bottleCountingManager.pushDrinkdDirection(currentType); //thread
+                 stillPushing = true;
+             }
+             auto end = high_resolution_clock::now();
+             auto duration = duration_cast<seconds>(end - start);
+             if ( duration.count() > secondPushing){
 
-            //         break;
-            //     } else {
-            //         state = PUSH_DRINK;
-            //     }
-            //     break;
-            // }
+                 stillPushing = false;
+                 state = IDLE;
+
+                 break;
+             } else {
+                 state = PUSH_DRINK;
+             }
+             break;*/
+             state =  WAIT_FINISH;
+         }
+         case WAIT_FINISH:
+         {
+               putText(frame, "pushing",cv::Point(100, 100),
+                        1, 3, Scalar(0, 0, 255), 3);
+         }
 
         default:
             break;
         }
-
+        
+        video.write(frame);
         imshow("frame", frame);
         waitKey(1);
     }
+    
+      video.release();
+
 
     return 0;
 }

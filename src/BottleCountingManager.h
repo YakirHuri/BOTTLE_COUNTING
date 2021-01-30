@@ -27,7 +27,8 @@ enum BOX_STATE
     IDLE,
     SEE_BOTTLE,
     COUNT_BOTTLE_OR_CAN,
-    PUSH_DRINK
+    PUSH_DRINK,
+    WAIT_FINISH
 };
 
 class BottleCountingManager
@@ -145,6 +146,14 @@ public:
         bool res = system(command.c_str());
         cout<<" the command is "<<command<<" and the rest is "<<res<<endl;
 
+    }
+    
+    void pushDrinkdDirection(DRINK_TYPE type){
+          string command = 
+            "python ../src/motor.py";
+        
+        bool res = system(command.c_str());
+        cout<<" the command is "<<command<<endl;
     }
 
 public:
