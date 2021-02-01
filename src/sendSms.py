@@ -1,15 +1,18 @@
 
 
 import boto3
-# shellycarme@gmail.com
-#YH33keva
-#pip install boto3
+# Nviner1@gmail.com
+#Net@nel79456123
 
-import numpy as np
+#pip3 install boto3
+#python3 main.py
+
+
+
 
 def sendSms(phoneNumber, sum):
     
-    sns = boto3.client('sns', aws_access_key_id="AKIAJNNUISWTPB424MWA",  aws_secret_access_key="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",   region_name="us-east-1")
+    sns = boto3.client('sns', aws_access_key_id="AKIAIYHKIJ3XYPE35PMA",  aws_secret_access_key="6cUe7PqLsZt0wMyjUdNbkuFLhbF/uBhZosmzeQZR",   region_name="us-east-1")
     # Send your sms message.
     sns.publish(
         PhoneNumber=phoneNumber,
@@ -27,5 +30,3 @@ if __name__ == '__main__':
 
     sendSms(phoneNumber, sum)
     
-
-   
