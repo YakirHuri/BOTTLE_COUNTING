@@ -27,6 +27,8 @@ int main(int argc, char **argv)
     int frame_width = 640; 
 
     int frame_height = 480; 
+    
+    bool stillPushing_ = false;
 
      VideoWriter video("/home/pi/bottle_ws/BOTTLE_COUNTING/src/outcpp.avi",0,5, cv::Size(frame_width,frame_height),true);
  
@@ -39,7 +41,9 @@ int main(int argc, char **argv)
         switch (state)
         {
         case IDLE:
-        {
+        {   
+            start = high_resolution_clock::now();
+            cout<<"IDLE"<<endl;
             vector<cv::Rect> b_rects = bottleCountingManager.detectTool(frame);
             cv::rectangle(frame, bottleCountingManager.area_, Scalar(0, 0, 0), 2);
 
@@ -55,23 +59,21 @@ int main(int argc, char **argv)
                 putText(frame, "SEE_BOTTLE, SUM IS :" + to_string(bottleCountingManager.sumMoney_),
                         cv::Point(100, 100),
                         1, 3, Scalar(0, 0, 255), 3);
+                        
                 start = high_resolution_clock::now();
                 break;
             }
         }
         case SEE_BOTTLE:
-        {
+        {   
+            cout<<"SEE_BOTTLE"<<endl;
+            
             vector<cv::Rect> b_rects = bottleCountingManager.detectTool(frame);
             cv::rectangle(frame, bottleCountingManager.area_, Scalar(0, 0, 0), 2);
 
             if (b_rects.size() > 0)
             {
-
-                if (b_rects.size() > 0)
-                {
-                    countBottleWinner++;
-                }
-
+                
                 bottleCountingManager.drawDetecetdRects(frame, b_rects, cv::Scalar(0, 255, 0));
 
                 auto end = high_resolution_clock::now();
@@ -111,45 +113,52 @@ int main(int argc, char **argv)
         }
 
         case COUNT_BOTTLE_OR_CAN:
-        {
+        {   
+            cout<<"COUNT_BOTTLE_OR_CAN"<<endl;
+
             bottleCountingManager.countMoney(type);
-            start = high_resolution_clock::now();
             type = UNKNOWN;
             // putText(frame,"SUM IS :" + to_string(sumMoney), cv::Point(100,100),
             //             1,3,Scalar(0,0,255),3);
             
-            state = PUSH_DRINK; //PUSH_DRINK;
+            state = PUSH_DRINK; 
             break;
         }
          case PUSH_DRINK:
          {   
-             bottleCountingManager.sendSms();
+             cout<<"PUSH_DRINK"<<endl;
+             //bottleCountingManager.sendSms();
 
              DRINK_TYPE  currentType = BOTTLE;   
-             bottleCountingManager.pushDrinkdDirection(currentType);
-             /*if (!stillPushing){
-                 bottleCountingManager.pushDrinkdDirection(currentType); //thread
-                 stillPushing = true;
-             }
-             auto end = high_resolution_clock::now();
-             auto duration = duration_cast<seconds>(end - start);
-             if ( duration.count() > secondPushing){
-
-                 stillPushing = false;
-                 state = IDLE;
-
-                 break;
-             } else {
-                 state = PUSH_DRINK;
-             }
-             break;*/
-             state =  WAIT_FINISH;
+            
+             bottleCountingManager.pushDrinkdDirection(currentType); //thread
+             start = high_resolution_clock::now();
+              
+              state = WAIT_FINISH;
+             
+             break;
          }
          case WAIT_FINISH:
-         {
-               putText(frame, "pushing",cv::Point(100, 100),
-                        1, 3, Scalar(0, 0, 255), 3);
-         }
+         {  
+             cout<<"WAIT_FINISH"<<endl;
+             int secondPushing = 7;
+
+             auto end = high_resolution_clock::now();
+             auto duration = duration_cast<seconds>(end - start);
+             
+             //finish pushing
+             if ( duration.count() > secondPushing){
+                 cout<<"still puhsing "<<endl;
+                 stillPushing_ = false;
+                 state = IDLE;
+                 break;
+             } 
+             else 
+             {   
+                 cout<<"WAIT_FINISH ..........."<<endl;
+                 state = WAIT_FINISH;
+             }
+         }         
 
         default:
             break;

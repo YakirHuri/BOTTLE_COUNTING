@@ -95,6 +95,12 @@ public:
                 case 6:
                     moneyForBigBottle_ = atof(words[1].c_str());               
                     break;
+               case 7:
+                    motorLeftPin_ = atoi(words[1].c_str());               
+                    break;
+               case 8:
+                    motorRightPin_ = atoi(words[1].c_str());               
+                    break;            
             }           
             count++;            
         }
@@ -149,11 +155,23 @@ public:
     }
     
     void pushDrinkdDirection(DRINK_TYPE type){
-          string command = 
-            "python ../src/motor.py";
-        
-        bool res = system(command.c_str());
-        cout<<" the command is "<<command<<endl;
+       
+          if (type ==   DRINK_TYPE::BOTTLE){
+                string command = 
+                "python ../src/motor.py " + std::to_string(motorLeftPin_);
+                
+                bool res = system(command.c_str());
+                cout<<" pushing bottle with pin  "<<motorLeftPin_<<endl;
+          }
+          else
+          {
+                string command = 
+                "python ../src/motor.py " + std::to_string(motorRightPin_);
+                
+                bool res = system(command.c_str());
+                cout<<" pushing bottle with pi  "<<motorRightPin_<<endl;
+          }
+       
     }
 
 public:
@@ -172,4 +190,6 @@ private:
     double moneyForBottle_;
     double moneyForCan_;
     double moneyForBigBottle_;
+    int motorLeftPin_;
+    int motorRightPin_;
 };

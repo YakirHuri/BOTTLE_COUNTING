@@ -15,11 +15,11 @@ def main(servoPin):
 
     #start PWM running, but with value of 0 (pulse off)
     servo1.start(0)
-    print ("Waiting for 2 seconds")
+    #print ("Waiting for 2 seconds")
     time.sleep(2)
 
     #Let's move the servo!
-    print ("Rotating 180 degrees in 10 steps")
+    #print ("Rotating 180 degrees in 10 steps")
 
     # Define variable duty
     duty = 2
@@ -36,7 +36,7 @@ def main(servoPin):
     time.sleep(2)
 
     # Turn back to 90 degrees
-    print ("Turning back to 90 degrees for 2 seconds")
+    #print ("Turning back to 90 degrees for 2 seconds")
     servo1.ChangeDutyCycle(7)
     time.sleep(0.5)
     servo1.ChangeDutyCycle(0)
@@ -46,7 +46,7 @@ def main(servoPin):
     #Clean things up at the end
     servo1.stop()
     GPIO.cleanup()
-    print ("Goodbye")
+    #print ("Goodbye")
 
 if __name__ == "__main__":
     import sys
