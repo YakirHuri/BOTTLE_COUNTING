@@ -26,6 +26,7 @@ enum BOX_STATE
 {
     IDLE,
     SEE_BOTTLE,
+    SEE_CAN,
     COUNT_BOTTLE_OR_CAN,
     PUSH_DRINK,
     WAIT_FINISH
