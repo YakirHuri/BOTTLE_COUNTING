@@ -2,7 +2,7 @@
 
 int main(int argc, char **argv)
 {
-
+    
     BottleCountingManager bottleCountingManager;
    
     VideoCapture capture(bottleCountingManager.videoPort_);
@@ -30,10 +30,8 @@ int main(int argc, char **argv)
     
     bool stillPushing_ = false;
 
-     VideoWriter video("/home/pi/bottle_ws/BOTTLE_COUNTING/src/outcpp.avi",0,5, cv::Size(frame_width,frame_height),true);
- 
-
-
+    VideoWriter video("/home/pi/bottle_ws/BOTTLE_COUNTING/src/outcpp.avi",0,5, cv::Size(frame_width,frame_height),true);
+    
     while (true)
     {
 
@@ -46,12 +44,14 @@ int main(int argc, char **argv)
             cout<<"IDLE"<<endl;
             vector<cv::Rect> b_rects = bottleCountingManager.detectTool(frame);
             cv::rectangle(frame, bottleCountingManager.area_, Scalar(0, 0, 0), 2);
-
+            state = IDLE;
+            
             if (b_rects.size() == 0)
             {
                 putText(frame, "IDLE", cv::Point(100, 100),
                         1, 3, Scalar(0, 0, 255), 3);
                 state = IDLE;
+                break;
             }
             else
             {
@@ -70,7 +70,7 @@ int main(int argc, char **argv)
             
             vector<cv::Rect> b_rects = bottleCountingManager.detectTool(frame);
             cv::rectangle(frame, bottleCountingManager.area_, Scalar(0, 0, 0), 2);
-
+          
             if (b_rects.size() > 0)
             {
                 
@@ -127,7 +127,6 @@ int main(int argc, char **argv)
          case PUSH_DRINK:
          {   
              cout<<"PUSH_DRINK"<<endl;
-             //bottleCountingManager.sendSms();
 
              DRINK_TYPE  currentType = BOTTLE;   
             
@@ -141,7 +140,7 @@ int main(int argc, char **argv)
          case WAIT_FINISH:
          {  
              cout<<"WAIT_FINISH"<<endl;
-             int secondPushing = 7;
+             int secondPushing = 1;
 
              auto end = high_resolution_clock::now();
              auto duration = duration_cast<seconds>(end - start);
@@ -164,9 +163,17 @@ int main(int argc, char **argv)
             break;
         }
         
+        
         video.write(frame);
         imshow("frame", frame);
-        waitKey(1);
+        char c = waitKey(1);
+        /// finsih the program and sens sms msg
+        if( c==27)
+        {
+            bottleCountingManager.sendSms();
+
+            break;
+        }
     }
     
       video.release();

@@ -27,9 +27,9 @@ def main(servoPin):
     # Loop for duty values from 2 to 12 (0 to 180 degrees)
     while duty <= 12:
         servo1.ChangeDutyCycle(duty)
-        time.sleep(0.3)
+        time.sleep(0.2)
         servo1.ChangeDutyCycle(0)
-        time.sleep(0.1)
+        time.sleep(0.2)
         duty = duty + 1
 
     # Wait a couple of seconds
