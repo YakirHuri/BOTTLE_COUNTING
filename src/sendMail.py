@@ -6,6 +6,9 @@ import sys
 mailToSend = sys.argv[1]
 finalMsg = sys.argv[2]
 
+productMail = "recycleservice1@gmail.com"
+productPassword = "nv79456123"
+
 # creates SMTP session 
 email = smtplib.SMTP('smtp.gmail.com', 587) 
   
@@ -14,14 +17,14 @@ email.starttls()
   
 # authentication
 # compiler gives an error for wrong credential. 
-email.login("yakirhuri21@gmail.com", "yakir26keva") 
+email.login(productMail, productPassword ) 
   
 # message to be sent 
-message = """From: %s\nTo: %s\nSubject: %s\n\n%s""" % (mailToSend, ", ".join("Finalproject649@gmail.com"), finalMsg, " bala")
+message = """From: %s\nTo: %s\nSubject: %s\n\n%s""" % (mailToSend, ", ".join(mailToSend), "total sum", finalMsg)
 
 
 # sending the mail 
-email.sendmail(mailToSend, lectureName, message) 
+email.sendmail(productMail, mailToSend, message) # from, to, msg
   
 # terminating the session 
 email.quit()

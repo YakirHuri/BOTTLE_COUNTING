@@ -91,7 +91,7 @@ int main(int argc, char **argv)
             vector<cv::Rect> b_rects = bottleCountingManager.detectTool(frame);
 
           
-            if (isCan && b_rects.size() == 0)
+            if (isCan /*&& b_rects.size() == 0*/)
             {               
 
                 auto end = high_resolution_clock::now();
@@ -225,7 +225,7 @@ int main(int argc, char **argv)
         /// finsih the program and sens sms msg
         if( c==27)
         {
-            bottleCountingManager.sendSms();
+            bottleCountingManager.sendMail();
 
             break;
         }

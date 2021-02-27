@@ -18,7 +18,6 @@ enum DRINK_TYPE
 {
     BOTTLE,
     CAN,
-    BOTTLE_BEER_1_5,
     UNKNOWN
 };
 
@@ -77,7 +76,7 @@ public:
                     secondThreshold_ = atoi(words[1].c_str());
                     break;
                 case 2:
-                    phoneNumber_ = (words[1].c_str());
+                    mail_ = (words[1].c_str());
                     break;
                 case 3:
                     area_ = cv::Rect((atoi(words[1].c_str())), (atoi(words[2].c_str())),
@@ -138,13 +137,22 @@ public:
 
     void countMoney(DRINK_TYPE type)
     {
-
+        if ( type ==   BOTTLE){
+            numOfBottles_++;
+         }
+         else if (type== CAN){
+            numOfCans_++;
+         }
+  
         sumMoney_ += 0.33;
     }
 
-    void sendSms() {
+    void sendMail() {
+        
+        string description= "total_sum_is_"+ to_string(sumMoney_) +
+            "__number_of_cans:" + to_string(numOfCans_) + "___number_of_bottles:" + to_string(numOfBottles_);
         string command = 
-            "python3 ../src/sendSms.py " + phoneNumber_ + " " + to_string(sumMoney_) ;
+            "python ../src/sendMail.py " + mail_ + " " + description ;
         
         bool res = system(command.c_str());
         cout<<" the command is "<<command<<" and the rest is "<<res<<endl;
@@ -455,10 +463,12 @@ public:
 private:
     CascadeClassifier bottles_cascade_;
     CascadeClassifier can_cascade_;
-    string phoneNumber_;
+    string mail_;
     double moneyForBottle_;
     double moneyForCan_;
     double moneyForBigBottle_;
     int motorLeftPin_;
     int motorRightPin_;
+    int numOfBottles_ = 0;
+    int numOfCans_ = 0;
 };
